@@ -1,0 +1,1 @@
+the original data 'Load_history.csv' is from https://www.kaggle.com/c/global-energy-forecasting-competition-2012-load-forecasting/data

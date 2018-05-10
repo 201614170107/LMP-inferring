@@ -13,6 +13,9 @@ year = 2007;
 month = 12;
 day = 23;
 
+REF = find(mpc.bus(:,2) == 3);
+nb = size(mpc.bus, 1);    %% number of buses
+
 if exist('data/gen_data.csv','file') == 2
     gen_data = csvread('data/gen_data.csv');
 else
@@ -21,8 +24,15 @@ end
 
 [PI,PI_E,PI_C,PI_L,feasible,congestion,congest_idx] = get_lmp(mpc,gen_data);
 
-REF = find(mpc.bus(:,2) == 3);
 k = [0.01,0.01];
 B = B_Kekatos(PI_E,PI_C,REF, k);
 
-plot_mat(B,'jet');
+plot_mat(B,'parula');
+L = get_lap(B,REF);
+plot_mat(L,'jet');
+
+k = [0.01,0.01,0.01/(nb-1)];
+B = B_estimate(PI_E,PI_C,REF, k);
+plot_mat(B,'parula');
+L = get_lap(B,REF);
+plot_mat(L,'jet');

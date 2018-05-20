@@ -1,5 +1,5 @@
-function gen_data = gen_load(input, mpc, divergence, year, month, day, divide)
-% function load_data = gen_load(input, mpc, divergence, year, month, day, divide)
+function gen_data = gen_load(input, output, mpc, divergence, year, month, day, divide)
+% function load_data = gen_load(input, output, mpc, divergence, year, month, day, divide)
 [num,~, raw ] = xlsread(input);
 num = num(num(:,2)==year & num(:,3)==month,:);
 load_series = [];
@@ -20,11 +20,12 @@ for i = 1:size(load_series,2)
     for j = 1:12
         % 12 points in an hour
         demand = mpc.bus(:,3);
-        demand(demand~=0) = load_series(:,i).*(1 + divergence* randn(size(original_demand,1),1))./divide ;
+        demand(demand~=0) = load_series(:,i).*(1 + divergence* randn(size(original_demand,1),1));
+        demand = demand./divide;
         gen_data = [gen_data,demand];
     end
 end
 
-csvwrite('data/gen_data.csv',gen_data);
+csvwrite(output,gen_data);
 
 end

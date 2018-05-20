@@ -1,19 +1,26 @@
-function y = plot_mat(B,map,e,title_txt,showtext)
-% y = PLOT_LAP(B,map,e,title_txt,showtext)
+function y = plot_mat(B,map,title_txt,norm,e,showtext)
+% y = PLOT_LAP(B,map,norm,e,title_txt,showtext)
 %% default arguments
-if nargin < 5
+if nargin < 6
     showtext = 0;
-    if nargin < 4 
-        title_txt = 'MATRIX';
-        if nargin < 3
-            e = 1e-3;
+    if nargin < 5 
+        e = 1e-3;
+        if nargin < 4
+            norm = 1;
+            if nargin <3 
+                title_txt = 'MATRIX';
+            end
         end
     end
 end
 B(abs(B)<e) = 0;
 figure,
 colormap(map)
-L = B / max(max(B));
+if norm > 0 
+    L = B / max(max(B));
+else
+    L = B;
+end
 image(L,'CDataMapping','scaled'),
 colorbar
 if showtext

@@ -19,9 +19,11 @@ PI = PI(:,IDX_congestion);
 
 B_solve = sdpvar(nb-1,nb-1);
 I = eye(nb-1);
-F = [B_solve >= 0, B_solve(:) <= I(:), B_solve*ones(nb-1,1) >= 0];
 P = I - ones(nb-1,nb-1);
 E = ones(1,nb-1);
+
+F = [B_solve(:) <= I(:), B_solve*E' >= 0,...
+    diag(B_solve) >= 1/(10*nb)*E', E*B_solve*E' <= 1.5 ];
 optimize(F,norm(B_solve*PI,1)+kappa1*trace(P*B_solve)-kappa2*logdet(B_solve)+kappa3*norm(E*B_solve,1),sdpsettings('solver','sdpt3'));
 
 BS = value(B_solve);
@@ -33,6 +35,5 @@ else
     B = BS;
 end
 B(abs(B)<e) = 0;
-
 
 end

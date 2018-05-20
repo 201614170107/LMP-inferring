@@ -1,11 +1,15 @@
-function [LMP, LMP_E, LMP_C, U, success] = traditional_dc_lmp(mpc)
+function [LMP, LMP_E, LMP_C, U, success, results] = traditional_dc_lmp(mpc)
 % function [LMP, LMP_E, LMP_C, success] = Traditional_dc_LMP(mpc)
 mpopt = mpoption('model','dc','verbose',0);
 om = opf_model(mpc);
 om = opf_setup(mpc, mpopt);
 om = build_cost_params(om);
 [results, success, raw] = dcopf_solver(om, mpopt);
-results = int2ext(results);
+try 
+    results = int2ext(results);
+catch error
+    %
+end
 lambda = results.mu.lin.u-results.mu.lin.l;
 
 T = makePTDF(mpc);

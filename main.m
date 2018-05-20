@@ -27,9 +27,9 @@ end
 
 day = [24];
 if exist('data/test_data.csv','file') == 2
-    gen_data = csvread('data/test_data.csv');
+    test_data = csvread('data/test_data.csv');
 else
-    gen_data = gen_load('data/Load_history.csv','data/test_data.csv', mpc, divergence, year, month, day, divide);
+    test_data = gen_load('data/Load_history.csv','data/test_data.csv', mpc, divergence, year, month, day, divide);
 end
 
 %%
@@ -86,29 +86,22 @@ figure,
 plot(1:size(PI2,2),PI2)
 
 load_idx = find(mpc.bus(:,3)>0);
-for i = 1:5
-    j = find(limit == min(limit));
-    m = f2(j);
-    n = t2(j);
-    L2(m,m) = L2(m,m) + L2(m,n);
-    L2(n,n) = L2(n,n) + L2(m,n);
-    L2(m,n) = 0;
-    L2(n,m) = 0;
-    [A2,x2,f2,t2] = L2A(L2);
-    X2 = diag(1./x2);
-    A2(:,REF) = [];
-    B2_2 = L2([1:REF-1,REF+1:end],[1:REF-1,REF+1:end]);
-    T2 = [zeros(size(A2,1),1),X2*A2*B2_2^(-1)];
-    % plot_mat(T2,'jet',0)
+for i = 1:26
+    [L2, f2, t2, x2, T2] = line_reduce(limit, L2, f2, t2, REF);
     Pf2 = T2 * PO;
     limit = max(abs(Pf2),[],2);
     mpc2 = create_mpc(mpc, f2, t2, x2, limit);
     [PI2,~,~,~,~,~,feasible_time2]  = get_lmp(mpc2,gen_data);
-    figure,
-    plot(1:size(PI2,2),PI2)
+    success_time = intersect(feasible_time,feasible_time2);
+    loss = [];
+    for j = load_idx'
+        loss = [loss, rmse(PI(j,success_time),PI2(j,success_time))];
+    end
+    fprintf('Line Reduce %d, mean loss =%g, max loss =%g\n',i, mean(loss), max(loss))
 end
 
-success_time = intersect(feasible_time,feasible_time2);
+%%
+% print to files
 for i = 1:nb
     figure,
     hold on,

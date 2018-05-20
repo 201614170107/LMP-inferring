@@ -32,13 +32,13 @@ for i = 1:size(load_data,2)
             [LMP,LMP_E,LMP_L,LMP_C, U, success] = litvinov_dc_lmp(mpc);
     end
     if success
-        if max(LMP)> 200
-            max(LMP)
-            mpopt = mpoption('model','dc','verbose',1);
-            results.success = 1;
-            results.et = 1;
-            printpf(results, 1, mpopt);
-        end
+%         if max(LMP)> 200
+%             max(LMP)
+%             mpopt = mpoption('model','dc','verbose',1);
+%             results.success = 1;
+%             results.et = 1;
+%             printpf(results, 1, mpopt);
+%         end
         feasible = feasible + 1;
         feasible_time = [feasible_time, i];
         P_out = results.bus(:,3);

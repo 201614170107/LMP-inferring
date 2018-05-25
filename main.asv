@@ -34,14 +34,13 @@ plot_mat(B0,'parula','B0');
 L0 = get_lap(B0,REF);
 plot_mat(L0,'jet','L0');
 
-k0 = 0.1;
-k = [k0,k0];
+k = [0.1,0.1];
 B1 = B_Kekatos(mdata.PricesClean, k);
 plot_mat(B1,'parula','B1');
 L1 = get_lap(B1,REF);
 plot_mat(L1,'jet','L1');
 
-k = [k0,k0,k0/(db.N-2)];
+k = [0.1,0.01,0.01/(db.N-1)];
 B2 = B_estimate(mdata.PricesClean, k);
 plot_mat(B2,'parula','B2');
 L2 = get_lap(B2,REF);
@@ -54,10 +53,10 @@ title('ROC')
 xlabel('FPR')
 ylabel('TPR')
 axis([0,0.15,0,1])
-[TPR1,FPR1] = evaluation(L0,L1);
+[TPR1,FPR1] = evaluation(B0,B1);
 plot(FPR1,TPR1,'b*')
 
-[TPR2,FPR2] = evaluation(L0,L2);
+[TPR2,FPR2] = evaluation(B0,B2);
 plot(FPR2,TPR2,'r^')
 hold off
 

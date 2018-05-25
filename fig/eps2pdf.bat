@@ -3,4 +3,3 @@ for /r %%a in (*.eps) do (
 	del %%a
 )
 echo success
-pause

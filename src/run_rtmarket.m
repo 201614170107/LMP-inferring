@@ -6,7 +6,7 @@ mdata.S = [];
 mdata.M = [];
 mdata.Prices = [];
 mdata.index = [];
-for h = 1:24
+for h = 1:744
     fprintf('hour %d:\n',h)
     for i = 1:12
         market = rtmarket(db, h);

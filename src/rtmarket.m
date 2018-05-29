@@ -33,8 +33,8 @@ if diagnostic.problem,
     market.muh = inf*ones(db.L,1);
     market.p = zeros(db.N,1);
     market.P = zeros(db.N,1);
-    market.s = ones(db.N-1,1);
-    market.price = ones(db.N-1,1);
+    market.s = zeros(db.N-1,1);
+    market.price = zeros(db.N-1,1);
 else
     market.mu0 = double(dual(F('balance')));
     market.mul = double(dual(F('conlow'))) .* (abs(double(dual(F('conlow'))))>1e-6);

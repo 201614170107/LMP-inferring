@@ -20,12 +20,48 @@ clear c pmin pmax,
 
 %%
 % real time market or load the market data.
-run_rt = 1;
+run_rt = 0;
 if run_rt ==1
     run_rtmarket
 else
     load data/mdata.mat
 end
+
+%% 
+% online admm
+load data/Market_with_changes.mat
+Bo = makeBmatrix(mpc);
+Bo = Bo / max(max(Bo));
+L0 = get_lap(Bo,REF);
+online_results = online_admm2(mdata.PricesClean, [0.1,0.1,0.1], Bo);
+a = online_results.B3(22,25,:);
+figure,
+plot(a(:));
+B_final = online_results.B3(:,:,end);
+plot_mat(B_final,'parula','B0');
+L_final = get_lap(B_final, REF);
+plot_mat(L_final,'jet','L')
+
+online_results2 = online_admm(mdata.PricesClean, [0.1,0.1,0.1],Bo);
+b = online_results2.B3(22,25,:);
+figure,
+plot(b(:));
+B_final2 = online_results2.B3(:,:,end);
+plot_mat(B_final2,'parula','B0');
+L_final2 = get_lap(B_final2, REF);
+
+figure,
+hold on,
+title('ROC')
+xlabel('FPR')
+ylabel('TPR')
+axis([0,0.15,0,1])
+[TPR1,FPR1] = evaluation(L0,L_final);
+plot(FPR1,TPR1,'r^')
+
+[TPR2,FPR2] = evaluation(L0,L_final2);
+plot(FPR2,TPR2,'b*')
+hold off
 
 %%
 % inferring the Laplacian matrix from LMP

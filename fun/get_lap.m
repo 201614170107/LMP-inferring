@@ -1,4 +1,4 @@
-function L = GRAPH_LAP(B,REF)
+function L = get_lap(B,REF)
     aDA = -sum(B);
     aDa = -sum(aDA);
     L = [B(1:REF-1,1:REF-1),aDA(1:REF-1)',B(1:REF-1,REF:end);

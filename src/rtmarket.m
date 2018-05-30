@@ -22,8 +22,8 @@ settings = sdpsettings('solver','mosek','verbose',0);
 clear('yalmip')
 P = sdpvar(db.N,5);
 F = [db.pmin<=P, P<=db.pmax, (sum(loads-sum(P,2))==0):'balance',...
-    (-db.flowlimit<=diag(db.x)*db.Ar*db.Bri*sum(P(2:end,:),2)):'conlow',...
-    (diag(db.x)*db.Ar*db.Bri*sum(P(2:end,:),2)<=db.flowlimit):'conhigh'];
+    (-db.flowlimit<=diag(db.x)*db.Ar*db.Bri*(sum(P(2:end,:),2)-loads(2:end) )):'conlow',...
+    (diag(db.x)*db.Ar*db.Bri*(sum(P(2:end,:),2)-loads(2:end) )<=db.flowlimit):'conhigh'];
 
 diagnostic = solvesdp(F,c(:)'*P(:),settings);
 if diagnostic.problem,

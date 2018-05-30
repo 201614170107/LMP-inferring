@@ -74,4 +74,4 @@ output.cost = cost;
 
 clk = clock;
 str = ['oADMM' num2str(clk(1)) '_' num2str(clk(2)) '_' num2str(clk(3)) '_' num2str(clk(4)) '.' num2str(clk(5)) '.' num2str(clk(6)) '.mat'];
-save(['data',str],'output');
+save(['data/',str],'output');

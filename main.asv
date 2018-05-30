@@ -31,8 +31,8 @@ end
 % online admm
 % load data/Market_with_changes.mat
 Bo = makeBmatrix(mpc);
-L0 = get_lap(Bo,REF);
 Bo = Bo / max(max(Bo));
+L0 = get_lap(Bo,REF);
 online_results = online_admm2(mdata.Prices, 0.005*[1,1]);
 online_results2 = online_admm(mdata.Prices, 0.005*[1,1]);
 % B_final = online_results.B3(:,:,end);
@@ -59,10 +59,8 @@ hold off
 %%
 % constructing PTDF matrix from the inferred Laplacian matrix
 for time = 1000:size(mdata.Prices,2)
-    fprintf('time=%d\n',time)
+    fprintf('time=%d',time)
     L_infered = get_lap(online_results.B3(:,:,time),REF);
-    avg_degree = mean(diag(L_infered));
-    L_infered = L_infered/avg_degree * mean(diag(L0));
     db_infered = L2A(L_infered, REF);
     Pf = diag(db_infered.x)*db_infered.Ar*db_infered.Bri* ...
         (mdata.gen(2:end,1:time)-mdata.loads(2:end,1:time) );
@@ -71,22 +69,18 @@ for time = 1000:size(mdata.Prices,2)
     train_error_min = 100;
     while (1)
         db_infered = line_reduce(db_infered, mdata ,REF, time);
-        fprintf('nl=%d\n',db_infered.L)
-        if db_infered.L <= 100
-            db_infered.pmin = db.pmin; db_infered.pmax = db.pmax;
-            mdata2 = get_lmp(db_infered, mdata, (time-287):time);
-            train_error = rmse(mdata2.Prices,mdata.Prices(:,(time-287):time));
-            fprintf('training rmse=%g\n',train_error)
-            if train_error<train_error_min
-                db_reduced = db_infered;
-                train_error_min = train_error;
-            end
-            if db_infered.L <= 41
-                fprintf('min training rmse=%g\n',train_error_min)
-                break
-            end
+        db_infered.pmin = db.pmin; db_infered.pmax = db.pmax;
+        mdata2 = get_lmp(db_infered, mdata, (time-287):time);
+        train_error = rmse(mdata2.Prices,mdata.Prices(:,(time-287):time));
+        if train_error<train_error_min
+            db_reduced = db_infered;
+            train_error_min = train_error;
+        end
+        if db_infered.L <= 41
+            break
         end
     end
+    
 end
 
 

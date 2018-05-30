@@ -35,6 +35,9 @@ m10 = zeros(N,1);
 
 P = eye(N) - ones(N,N);
 Q = (2*rho+eta) * eye(N,N) + rho * (e * e');
+[V,D,W] = eig(Q);
+Q2 = W*(D.^0.5)*W';
+Q2 = Q2^(-1);
 
 %% TIME ITERATIONS
 output.B3 = zeros(N,N,T);
@@ -42,12 +45,12 @@ for time = 1:T,
     tic;
     %% B1 update
     B1c = rho*(B2 + B3 - M12 - M13 + b * e' - m10 * e' + ...
-        eta/rho*B1 - k(1)/(T*rho)*P) * Q^(-1) ;
-    pt = Q^(-1) * Prices(:,time);
+        eta/rho*B1 - k(1)/(T*rho)*P) * Q2 ;
+    pt = Q2 * Prices(:,time);
     if huber,
-        B1 = modulehuber(pt,B1c,1,k(3)/(2*rho+eta));
+        B1 = modulehuber(pt,B1c,1,k(3)) * Q2;
     else
-        B1 = modulel1(pt,B1c);
+        B1 = modulel1(pt,B1c) * Q2;
     end;    
     
     %% B2 update

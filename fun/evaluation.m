@@ -1,4 +1,4 @@
-function [TPR,FPR] = evaluation(B0,B)
+function [AUC,TPR,FPR] = evaluation(B0,B)
 
 nb = size(B,1) + 1;
 B0_triu = triu(B0,1);
@@ -16,5 +16,5 @@ for e = eps:1e-2:max(abs(B_triu))
     TPR = [TPR; TP/length(IDX0)]; 
     FPR = [FPR; FP/( (nb-1)*(nb-2)/2 - length(IDX0) )];
 end
-
+AUC = sum(([1;FPR]-[FPR;0]).*([1;TPR] + [TPR;0])/2 );
 end
